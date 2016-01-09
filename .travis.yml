@@ -4,7 +4,7 @@ node_js:
 sudo: false
 before_script:
 - npm install -g gulp
-before_deploy: gulp build
+# before_deploy: gulp build
 cache:
   directories:
   - node_modules
