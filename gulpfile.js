@@ -139,13 +139,3 @@ gulp.task('purgecache', function () {
     })
   }
 })
-
-gulp.task('optimize', function () {
-  return gulp.src(path.join(DIR.dist, 'chassis.min.js'))
-  .pipe(uglify({
-    compress: {
-      warnings: true
-    }
-  }))
-  .pipe(gulp.dest(DIR.dist))
-})
