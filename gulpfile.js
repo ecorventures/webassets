@@ -23,7 +23,7 @@ const DIR = {
 
 // Build a release
 // gulp.task('build', ['version', 'clean', 'copy'])
-gulp.task('build', ['clean', 'copy'])
+gulp.task('build', ['clean', 'copy', 'purgecache'])
 
 // Check versions for Bower & npm
 // gulp.task('version', function (next) {
@@ -104,7 +104,9 @@ gulp.task('copy', function () {
       inflateSymlinks: true // Whether to follow symlinks or not when copying files
     })
   })
+})
 
+gulp.task('purgecache', function () {
   // Clear CloudFlare cache
   if (process.env.CLOUDFLARE_EMAIL && process.env.CLOUDFLARE_API_KEY) {
     console.log('Clearing CloudFlare cache...'.yellow)
