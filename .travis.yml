@@ -26,3 +26,4 @@ notifications:
       - 'new %{repository}#%{build_number} assets deployed to cdn.ecor.biz. %{message} (<a href="%{build_url}">Details</a>)'
     on_pull_requests: false
     notify: true
+    html: true
