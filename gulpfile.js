@@ -1,18 +1,15 @@
 'use strict'
 
-/**
- * TODO:
- *  - Add a clean build task
- *  - Monitor removed files and strip from production.
- *  - Setup remote deployment (production)
- */
+// require('localenvironment')
 require('colors')
+
 const gulp = require('gulp')
 const concat = require('gulp-concat')
 const uglify = require('uglify-js')
 const header = require('gulp-header')
 const svgmin = require('gulp-svgmin')
 const wrench = require('wrench')
+const CloudFlareAPI = require('cloudflare4')
 const del = require('del')
 const fs = require('fs')
 const path = require('path')
@@ -108,48 +105,21 @@ gulp.task('copy', function () {
     })
   })
 
-  // console.log(svgs)
-  // Minify each individual file
-  // sources.forEach(function (file, index) {
-  //   gulp.src(file)
-  //   .pipe(concat(files[index].replace(/\//gi,'.') + '.min.js'))
-  //   .pipe(uglify({
-  //     mangle: true,
-  //     compress: {
-  //       warnings: true
-  //     }
-  //   }))
-  //   .pipe(header(headerComment))
-  //   .pipe(gulp.dest(DIR.dist))
-  // })
-
-  // Generate full project
-  // gulp.src(sources)
-  // .pipe(concat('chassis.dev.js'))
-  // .pipe(header(headerComment))
-  // .pipe(gulp.dest(DIR.dist))
-  //
-  // gulp.src(sources.slice(0,6))
-  // .pipe(concat('chassis.slim.min.js'))
-  // .pipe(uglify({
-  //   mangle: true,
-  //   compress: {
-  //     warnings: true
-  //   }
-  // }))
-  // .pipe(header(headerComment))
-  // .pipe(gulp.dest(DIR.dist))
-  //
-  // return gulp.src(sources)
-  // .pipe(concat('chassis.min.js'))
-  // .pipe(uglify({
-  //   mangle: true,
-  //   compress: {
-  //     warnings: true
-  //   }
-  // }))
-  // .pipe(header(headerComment))
-  // .pipe(gulp.dest(DIR.dist))
+  // Clear CloudFlare cache
+  if (process.env.CLOUDFLARE_EMAIL && process.env.CLOUDFLARE_API_KEY) {
+    console.log('Clearing CloudFlare cache...'.yellow)
+    let cf = new CloudFlareAPI({
+      email: process.env.CLOUDFLARE_EMAIL,
+      key: process.env.CLOUDFLARE_API_KEY
+    })
+    cf.zoneGetAll({
+      name: 'ecor.biz'
+    }).then(function (zone) {
+      cf.zonePurgeCache(zone[0].id).then(function () {
+        console.log('Cache purged.'.green.bold)
+      })
+    })
+  }
 })
 
 gulp.task('optimize', function () {

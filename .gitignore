@@ -3,3 +3,4 @@
 !.travis.yml
 _*
 node_modules
+env.json
