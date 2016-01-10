@@ -23,5 +23,6 @@ notifications:
     rooms:
       secure: RP1Nk54+pVdkm9S4oa1W19t/18TqCnYffBKrrGEvFmW0ZG6CW1tgejyozunKAccOi/tfFiSd4SyQ3nCdMyk9U6EBedRe2FeDQpYw2mlCcJmsu1J84bI8QLLE7AY16dPjM0/DY8R3aPa3Ey7ZwsbemEIVstiaD3hn28cwA2vYOqd1TGIEa0Y2Or78pOu7fcaiatN0ANVrVUEmtm7M0gaGvw6DusTcL9+vXQfCOk7mASMwpuN/JqlAq+9yWJnNcs96AuJzqldbH7O8u5A+2oGik8RhGsTPLSPf6rIOxqTh9hzXR1soM+/1vykDZZAT3BQkXJ6EuzfS4uCw3y54d6Fhft3mBJsis7/DnsOf73WLxK05RlyRJWd5SHF0D4AOpkxEfWDLF4yCUfybxAv3tpaiT9BRxRx8Sg/DwqB9pGuepYzUsZySjmTDUUw13m/0xpD3nskAPF9KtnREgJmqdmAwJESrmO4IBu8dL2i6oEqxq1gWNQ8NX25G43pfbz3Q4cfXXuGnT0ri/Stg3UmgRBC8xxpzbpINWx8h3atfnnj+1/WDBSFk88xXaYcLSX0GDEt/7YQpK+iBC87N5vZVlo76+061+dku/XaxhDbvgwlO3EcZMUEAhQCBdnMCX66D6RYI47Y44u4q5wnlTKQXaSQhv+GO5aOCNYsOSr4bn5w8cNY=
     template:
-      - '%{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{message}'
+      - 'new %{repository}#%{build_number} assets deployed to cdn.ecor.biz. %{message} (<a href="%{build_url}">Details</a>)'
     on_pull_requests: false
+    notify: true
