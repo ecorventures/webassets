@@ -48,30 +48,46 @@ gulp.task('clean', function (next) {
   next()
 })
 
+var md = function (pth) {
+  if (!fs.existsSync(pth)) {
+    if (fs.existsSync(path.join(pth, '..'))) {
+      // Parent dir exists, create the directory
+      console.log('Making'.green, pth.green)
+      fs.mkdirSync(pth)
+    } else {
+      // Parent dir doesn't exist, create it first
+      md(path.join(pth, '..'))
+      md(pth)
+    }
+  }
+}
+
 gulp.task('copy', function () {
   console.log('Copying distribution files to ', DIR.dist)
 
   // Build JS
-  console.log('Producing JavaScript...')
-  let jslibs = wrench.readdirSyncRecursive(path.join(DIR.source, 'lib')).map(function (fp) {
+  console.log('\nProducing JavaScript:'.cyan.bold.underline)
+  let jslibs = wrench.readdirSyncRecursive(path.join(DIR.source, 'lib')).filter(function (fp) {
+    return !fs.statSync(path.join(DIR.source, 'lib', fp)).isDirectory()
+  }).map(function (fp) {
     return path.join(DIR.source, 'lib', fp)
   })
 
   jslibs.forEach(function (file, index) {
     let pth = file.replace(DIR.source, DIR.dist)
-    if (!fs.existsSync(path.dirname(pth))) {
-      fs.mkdirSync(path.dirname(pth))
-    }
-    fs.writeFileSync(pth, headerComment + uglify.minify(file, {
+    md(path.dirname(pth))
+    let content = uglify.minify(file, {
       mangle: true,
       compress: {
         warnings: true
       }
-    }).code)
+    }).code
+    fs.writeFileSync(pth, headerComment + content)
   })
+  console.log('JS optimization complete.'.green)
 
   // Compress SVG's
-  console.log('Producing SVG icons...')
+  console.log('\nProducing SVG icons:'.cyan.bold.underline)
   let svgs = wrench.readdirSyncRecursive(path.join(DIR.source, 'icons')).filter(function (fp) {
     return path.extname(fp) === '.svg'
   }).map(function (fp) {
@@ -79,9 +95,7 @@ gulp.task('copy', function () {
   })
   svgs.forEach(function (file) {
     let pth = file.replace(DIR.source, DIR.dist)
-    if (!fs.existsSync(path.dirname(pth))) {
-      fs.mkdirSync(path.dirname(pth))
-    }
+    md(path.dirname(pth))
     gulp.src(file)
       .pipe(svgmin().on('error', function (err) {
         console.log(file.toString().red.bold)
@@ -90,9 +104,10 @@ gulp.task('copy', function () {
       }))
       .pipe(gulp.dest(path.dirname(pth)))
   })
+  console.log('SVG icon optimization complete.'.green)
 
   // Copy everything else
-  console.log('Copying everything else...')
+  console.log('\nCopying everything else:'.cyan.bold.underline)
   fs.readdirSync(DIR.source).filter(function (dir) {
     return ['lib', 'icons'].indexOf(dir.toLowerCase()) < 0
   }).forEach(function (dir) {
@@ -103,13 +118,14 @@ gulp.task('copy', function () {
       preserveTimestamps: true, // Preserve the mtime and atime when copying files
       inflateSymlinks: true // Whether to follow symlinks or not when copying files
     })
+    console.log('Copy complete.\n'.green)
   })
 })
 
 gulp.task('purgecache', function () {
   // Clear CloudFlare cache
   if (process.env.CLOUDFLARE_EMAIL && process.env.CLOUDFLARE_API_KEY) {
-    console.log('Clearing CloudFlare cache...'.yellow)
+    console.log('Clearing CloudFlare cache...'.cyan.underline)
     let cf = new CloudFlareAPI({
       email: process.env.CLOUDFLARE_EMAIL,
       key: process.env.CLOUDFLARE_API_KEY
@@ -118,7 +134,7 @@ gulp.task('purgecache', function () {
       name: 'ecor.biz'
     }).then(function (zone) {
       cf.zonePurgeCache(zone[0].id).then(function () {
-        console.log('Cache purged.'.green.bold)
+        console.log('Cache purged.'.green.bold + '\n')
       })
     })
   }
