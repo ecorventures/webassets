@@ -48,7 +48,8 @@
       "_**/*",
       "dist/**/*",
       "gulpfile.js",
-      "icons/**/*"
+      "icons/**/*",
+      "lib/vendor/**/*"
     ],
     "globals": [
       "NGN",
