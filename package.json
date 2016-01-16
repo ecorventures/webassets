@@ -49,7 +49,7 @@
       "dist/**/*",
       "gulpfile.js",
       "icons/**/*",
-      "lib/vendor/**/*"
+      "lib/vendor"
     ],
     "globals": [
       "NGN",
